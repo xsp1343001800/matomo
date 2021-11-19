@@ -206,16 +206,16 @@
         },
         {
             "name": "geoip2/geoip2",
-            "version": "v2.11.0",
+            "version": "v2.12.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/maxmind/GeoIP2-php.git",
-                "reference": "d01be5894a5c1a3381c58c9b1795cd07f96c30f7"
+                "reference": "a320c2c3b7498c83bf9b2a670af6888c73e29f50"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/maxmind/GeoIP2-php/zipball/d01be5894a5c1a3381c58c9b1795cd07f96c30f7",
-                "reference": "d01be5894a5c1a3381c58c9b1795cd07f96c30f7",
+                "url": "https://api.github.com/repos/maxmind/GeoIP2-php/zipball/a320c2c3b7498c83bf9b2a670af6888c73e29f50",
+                "reference": "a320c2c3b7498c83bf9b2a670af6888c73e29f50",
                 "shasum": ""
             },
             "require": {
@@ -225,7 +225,8 @@
                 "php": ">=7.2"
             },
             "require-dev": {
-                "friendsofphp/php-cs-fixer": "2.*",
+                "friendsofphp/php-cs-fixer": "3.*",
+                "phpstan/phpstan": "*",
                 "phpunit/phpunit": "^8.0 || ^9.0",
                 "squizlabs/php_codesniffer": "3.*"
             },
@@ -257,9 +258,9 @@
             ],
             "support": {
                 "issues": "https://github.com/maxmind/GeoIP2-php/issues",
-                "source": "https://github.com/maxmind/GeoIP2-php/tree/v2.11.0"
+                "source": "https://github.com/maxmind/GeoIP2-php/tree/v2.12.0"
             },
-            "time": "2020-10-01T18:48:34+00:00"
+            "time": "2021-11-17T20:54:16+00:00"
         },
         {
             "name": "lox/xhprof",
@@ -602,16 +603,16 @@
         },
         {
             "name": "matomo/matomo-php-tracker",
-            "version": "3.0.3",
+            "version": "3.0.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/matomo-org/matomo-php-tracker.git",
-                "reference": "37ad506a9e5b73dd5c8664708086fd4b888547fd"
+                "reference": "441d377411296e04558f88c27706545c9524ac2e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/matomo-org/matomo-php-tracker/zipball/37ad506a9e5b73dd5c8664708086fd4b888547fd",
-                "reference": "37ad506a9e5b73dd5c8664708086fd4b888547fd",
+                "url": "https://api.github.com/repos/matomo-org/matomo-php-tracker/zipball/441d377411296e04558f88c27706545c9524ac2e",
+                "reference": "441d377411296e04558f88c27706545c9524ac2e",
                 "shasum": ""
             },
             "require": {
@@ -654,7 +655,7 @@
                 "issues": "https://github.com/matomo-org/matomo-php-tracker/issues",
                 "source": "https://github.com/matomo-org/matomo-php-tracker"
             },
-            "time": "2021-11-15T00:05:09+00:00"
+            "time": "2021-11-15T18:55:52+00:00"
         },
         {
             "name": "matomo/network",
