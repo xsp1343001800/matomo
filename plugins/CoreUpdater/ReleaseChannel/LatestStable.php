@@ -28,11 +28,6 @@ class LatestStable extends ReleaseChannel
         return Piwik::translate('General_Recommended');
     }
 
-    public function getDownloadUrlWithoutScheme($version)
-    {
-        return '://builds.matomo.org/piwik.zip';
-    }
-
     public function getOrder()
     {
         return 10;

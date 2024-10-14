@@ -12,8 +12,6 @@ use Piwik\Piwik;
 use Piwik\Plugin\ViewDataTable;
 use Piwik\Plugins\CoreVisualizations\Visualizations\HtmlTable;
 use Piwik\Plugins\UserId\Columns\UserId;
-use Piwik\Report\ReportWidgetFactory;
-use Piwik\Widget\WidgetsList;
 
 /**
  * A report showing all unique user IDs and some aggregated information about them. It also allows
@@ -57,7 +55,6 @@ class GetUsers extends Base
          */
         $view->config->columns_to_display = $this->metrics;
         $view->config->show_all_views_icons = false;
-        $view->config->show_active_view_icon = false;
         $view->config->show_related_reports = false;
         $view->config->show_insights = false;
         $view->config->show_pivot_by_subtable = false;

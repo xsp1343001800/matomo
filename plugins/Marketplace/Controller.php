@@ -8,6 +8,7 @@
 
 namespace Piwik\Plugins\Marketplace;
 
+use Exception;
 use Piwik\Common;
 use Piwik\Date;
 use Piwik\Filesystem;
@@ -29,7 +30,6 @@ use Piwik\SettingsPiwik;
 use Piwik\SettingsServer;
 use Piwik\Url;
 use Piwik\View;
-use Exception;
 
 class Controller extends \Piwik\Plugin\ControllerAdmin
 {
@@ -134,6 +134,16 @@ class Controller extends \Piwik\Plugin\ControllerAdmin
         ));
     }
 
+
+    public function manageLicenseKey()
+    {
+        Piwik::checkUserHasSuperUserAccess();
+
+        return $this->renderTemplate('@Marketplace/manageLicenseKey', array(
+            'hasValidLicenseKey' => $this->licenseKey->has() && $this->consumer->isValidConsumer(),
+        ));
+    }
+
     private function getPrettyLongDate($date)
     {
         if (empty($date)) {
@@ -209,7 +219,7 @@ class Controller extends \Piwik\Plugin\ControllerAdmin
         $view = $this->configureViewAndCheckPermission('@Marketplace/overview');
 
         $show  = Common::getRequestVar('show', 'plugins', 'string');
-        $query = Common::getRequestVar('query', '', 'string', $_POST);
+        $query = Common::getRequestVar('query', '', 'string');
 
         $sort = new Sort();
         $sort = $sort->getSort();
@@ -466,7 +476,7 @@ class Controller extends \Piwik\Plugin\ControllerAdmin
         $nonce = Common::getRequestVar('nonce', null, 'string');
 
         if (!Nonce::verifyNonce($nonceName, $nonce)) {
-            throw new \Exception(Piwik::translate('General_ExceptionNonceMismatch'));
+            throw new \Exception(Piwik::translate('General_ExceptionSecurityCheckFailed'));
         }
 
         Nonce::discardNonce($nonceName);
@@ -521,4 +531,5 @@ class Controller extends \Piwik\Plugin\ControllerAdmin
 
         return $view;
     }
+
 }

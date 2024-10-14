@@ -20,6 +20,10 @@ describe("SupportedBrowser", function () {
         testEnvironment.save();
     });
 
+    after(async () => {
+        await page.setUserAgent(page.originalUserAgent);
+    });
+
     it("should load widget when browser supported", async function () {
         page.setUserAgent(firefoxUserAgent);
         await page.goto(widgetUrl);
@@ -29,6 +33,8 @@ describe("SupportedBrowser", function () {
     it("should load page when browser supported", async function () {
         page.setUserAgent(firefoxUserAgent);
         await page.goto(pageUrl);
+        await page.waitForSelector('.widget', { visible: true });
+        await page.waitForNetworkIdle();
         expect(await page.screenshot({ fullPage: true })).to.matchImage('page_loads_when_browser_supported');
     });
 

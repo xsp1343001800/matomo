@@ -13,7 +13,6 @@ use Piwik\CliMulti\Process;
 use Piwik\Container\StaticContainer;
 use Piwik\Intl\Data\Provider\LanguageDataProvider;
 use Piwik\Intl\Data\Provider\RegionDataProvider;
-use Piwik\Plugins\UserCountry\LocationProvider\DefaultProvider;
 use Piwik\Tracker\Cache as TrackerCache;
 
 /**
@@ -298,7 +297,7 @@ class Common
     {
         try {
             // phpcs:ignore Generic.PHP.ForbiddenFunctions
-            return unserialize($string, ['allowed_classes' => empty($allowedClasses) ? false : $allowedClasses]);
+            return unserialize($string ?? '', ['allowed_classes' => empty($allowedClasses) ? false : $allowedClasses]);
         } catch (\Throwable $e) {
             if ($rethrow) {
                 throw $e;
@@ -577,6 +576,38 @@ class Common
         return $value;
     }
 
+    /**
+     * Replaces lbrace with an encoded entity to prevent angular from parsing the content
+     *
+     * @deprecated Will be removed, once the vue js migration is done
+     *
+     * @param $string
+     * @return array|string|string[]|null
+     */
+    public static function fixLbrace($string)
+    {
+        $chars = array('{', '&#x7B;', '&#123;', '&lcub;', '&lbrace;', '&#x0007B;');
+
+        static $search;
+        static $replace;
+
+        if (!isset($search)) {
+            $search = array_map(function ($val) { return $val . $val; }, $chars);
+        }
+        if (!isset($replace)) {
+            $replace = array_map(function ($val) { return $val . '&#8291;' . $val; }, $chars);
+        }
+
+        $replacedString = is_null($string) ? $string : str_replace($search, $replace, $string);
+
+        // try to replace characters until there are no changes
+        if ($string !== $replacedString) {
+            return self::fixLbrace($replacedString);
+        }
+
+        return $string;
+    }
+
     /*
      * Generating unique strings
      */
@@ -716,7 +747,7 @@ class Common
     }
 
     /**
-     * Returns a human readable error message in case an error occcurred during the last json encode/decode.
+     * Returns a human readable error message in case an error occurred during the last json encode/decode.
      * Returns an empty string in case there was no error.
      *
      * @return string
@@ -743,8 +774,12 @@ class Common
 
     public static function stringEndsWith($haystack, $needle)
     {
-        if ('' === $needle) {
+        if (strlen(strval($needle)) === 0) {
             return true;
+        }
+
+        if (strlen(strval($haystack)) === 0) {
+            return false;
         }
 
         $lastCharacters = substr($haystack, -strlen($needle));
@@ -809,7 +844,7 @@ class Common
         );
 
         if (is_null($browserLang)) {
-            $browserLang = self::sanitizeInputValues(@$_SERVER['HTTP_ACCEPT_LANGUAGE']);
+            $browserLang = self::sanitizeInputValues($_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '');
             if (empty($browserLang) && self::isPhpCliMode()) {
                 $browserLang = @getenv('LANG');
             }
@@ -895,7 +930,7 @@ class Common
     }
 
     /**
-     * Returns the language and region string, based only on the Browser 'accepted language' information.
+     * Returns the language string, based only on the Browser 'accepted language' information.
      * * The language tag is defined by ISO 639-1
      *
      * @param string $browserLanguage Browser's accepted language header
@@ -904,8 +939,8 @@ class Common
      */
     public static function extractLanguageCodeFromBrowserLanguage($browserLanguage, $validLanguages = array())
     {
-        $validLanguages = self::checkValidLanguagesIsSet($validLanguages);
         $languageRegionCode = self::extractLanguageAndRegionCodeFromBrowserLanguage($browserLanguage, $validLanguages);
+        $validLanguages = self::checkValidLanguagesIsSet($validLanguages);
 
         if (strlen($languageRegionCode) === 2) {
             $languageCode = $languageRegionCode;
@@ -924,14 +959,15 @@ class Common
      * * The region tag is defined by ISO 3166-1
      *
      * @param string $browserLanguage Browser's accepted language header
-     * @param array $validLanguages array of valid language codes. Note that if the array includes "fr" then it will consider all regional variants of this language valid, such as "fr-ca" etc.
-     * @return string 2 letter ISO 639 code 'es' (Spanish) or if found, includes the region as well: 'es-ar'
+     * @param array $validLanguages array of valid language/region codes.
+     * @return string 2-letter ISO 639 code 'es' (Spanish) or if found, includes the region as well: 'es-ar'
      */
     public static function extractLanguageAndRegionCodeFromBrowserLanguage($browserLanguage, $validLanguages = array())
     {
+        $forceRegionValidation = !empty($validLanguages);
         $validLanguages = self::checkValidLanguagesIsSet($validLanguages);
 
-        if (!preg_match_all('/(?:^|,)([a-z]{2,3})([-][a-z]{2})?/', $browserLanguage, $matches, PREG_SET_ORDER)) {
+        if (!preg_match_all('/(?:^|,)([a-z]{2,3})(?:[-][a-z]{4})?([-][a-z]{2})?/', $browserLanguage, $matches, PREG_SET_ORDER)) {
             return self::LANGUAGE_CODE_INVALID;
         }
         foreach ($matches as $parts) {
@@ -948,7 +984,8 @@ class Common
                     return $langIso639 . $regionIso3166;
                 }
 
-                if (in_array($langIso639, $validLanguages)) {
+                // if a set of valid codes was provided, we do not append the region if it was not included
+                if (in_array($langIso639, $validLanguages) && !$forceRegionValidation) {
                     return $langIso639 . $regionIso3166;
                 }
             }
@@ -1102,6 +1139,7 @@ class Common
             401 => 'Unauthorized',
             403 => 'Forbidden',
             404 => 'Not Found',
+            429 => 'Too Many Requests',
             500 => 'Internal Server Error',
             503 => 'Service Unavailable',
         );
@@ -1135,7 +1173,7 @@ class Common
     {
         $cache = TrackerCache::getCacheGeneral();
         return empty($cache['currentLocationProviderId'])
-            ? DefaultProvider::ID
+            ? Plugins\UserCountry\LocationProvider::getDefaultProviderId()
             : $cache['currentLocationProviderId'];
     }
 

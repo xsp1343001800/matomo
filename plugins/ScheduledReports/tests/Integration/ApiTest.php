@@ -535,6 +535,82 @@ class ApiTest extends IntegrationTestCase
         self::assertStringNotContainsString('id="UserCountry_getCountry"', $result);
     }
 
+    /**
+     * @dataProvider getValidDatePeriodCombinationsForGenerateReport
+     *
+     * @param string|false $period
+     */
+    public function test_generateReport_generatesAReportForAllValidDatePeriodCombinations(
+        string $date,
+        $period
+    ): void {
+        $idReport = APIScheduledReports::getInstance()->addReport(
+            1,
+            '',
+            Schedule::PERIOD_DAY,
+            0,
+            ScheduledReports::EMAIL_TYPE,
+            ReportRenderer::HTML_FORMAT,
+            [
+                'VisitsSummary_get',
+            ],
+            [
+                ScheduledReports::DISPLAY_FORMAT_PARAMETER => ScheduledReports::DISPLAY_FORMAT_TABLES_ONLY
+            ]
+        );
+
+        $result = APIScheduledReports::getInstance()->generateReport(
+            $idReport,
+            $date,
+            false,
+            APIScheduledReports::OUTPUT_RETURN,
+            $period
+        );
+
+        self::assertStringContainsString('id="VisitsSummary_get"', $result);
+    }
+
+    /**
+     * @return iterable<string, array{string, string|false}>
+     */
+    public function getValidDatePeriodCombinationsForGenerateReport(): iterable
+    {
+        yield 'default period' => [
+            '2024-01-01',
+            false,
+        ];
+
+        yield 'single day' => [
+            '2024-01-01',
+            'day',
+        ];
+
+        yield 'single week' => [
+            '2024-01-01',
+            'week',
+        ];
+
+        yield 'single month' => [
+            '2024-01-01',
+            'month',
+        ];
+
+        yield 'single year' => [
+            '2024-01-01',
+            'year',
+        ];
+
+        yield 'custom range' => [
+            '2024-01-01,2024-01-02',
+            'range',
+        ];
+
+        yield 'named range' => [
+            'last7',
+            'range',
+        ];
+    }
+
     public function test_generateReport_throwsIfMultiplePeriodsRequested()
     {
         $this->expectException(\Piwik\Http\BadRequestException::class);
@@ -557,6 +633,81 @@ class ApiTest extends IntegrationTestCase
 
         APIScheduledReports::getInstance()->generateReport($idReport, '2012-03-03,2012-03-23',
             $language = false, $outputType = APIScheduledReports::OUTPUT_RETURN);
+    }
+
+    /**
+     * @dataProvider getInvalidDatePeriodCombinationsForGenerateReport
+     *
+     * @param string|false $period
+     */
+    public function test_generateReport_throwsIfInvalidDatePeriodCombinationRequested(
+        string $date,
+        $period
+    ): void {
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('General_ExceptionInvalidDateFormat');
+
+        $idReport = APIScheduledReports::getInstance()->addReport(
+            1,
+            '',
+            Schedule::PERIOD_DAY,
+            0,
+            ScheduledReports::EMAIL_TYPE,
+            ReportRenderer::HTML_FORMAT,
+            [
+                'VisitsSummary_get',
+            ],
+            [
+                ScheduledReports::DISPLAY_FORMAT_PARAMETER => ScheduledReports::DISPLAY_FORMAT_TABLES_ONLY
+            ]
+        );
+
+        APIScheduledReports::getInstance()->generateReport(
+            $idReport,
+            $date,
+            false,
+            APIScheduledReports::OUTPUT_RETURN,
+            $period
+        );
+    }
+
+    /**
+     * @return iterable<string, array{string, string|false}>
+     */
+    public function getInvalidDatePeriodCombinationsForGenerateReport(): iterable
+    {
+        yield 'invalid default period' => [
+            '2024-xx-01',
+            false,
+        ];
+
+        yield 'invalid day' => [
+            '2024.01.01',
+            'day',
+        ];
+
+        yield 'invalid range format' => [
+            '2024-01-01//2024-01-02',
+            'range',
+        ];
+
+        yield 'invalid named range' => [
+            'lastTen',
+            'range',
+        ];
+    }
+
+    public function test_generateReport_throwsIfInvalidReportRequested(): void
+    {
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage("Requested report couldn't be found.");
+
+        APIScheduledReports::getInstance()->generateReport(
+            1234567890,
+            Date::factory('now')->toString(),
+            false,
+            APIScheduledReports::OUTPUT_RETURN
+        );
     }
 
     public function test_addReport_validatesEvolutionPeriodForParam()

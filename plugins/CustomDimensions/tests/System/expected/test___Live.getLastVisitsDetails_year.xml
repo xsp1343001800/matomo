@@ -16,6 +16,8 @@
 				
 				<pageId>4</pageId>
 				<bandwidth />
+				<timeSpent>0</timeSpent>
+				<timeSpentPretty>0s</timeSpentPretty>
 				<pageviewPosition>1</pageviewPosition>
 				<title>Fourth page view</title>
 				<subtitle>http://example.com/sub_en/page?param=en_US</subtitle>
@@ -35,6 +37,9 @@
 				<goalPageId>4</goalPageId>
 				
 				<url>http://example.com/sub_en/page?param=en_US</url>
+				<referrerType>direct</referrerType>
+				<referrerName />
+				<referrerKeyword />
 				<icon>plugins/Morpheus/images/goal.png</icon>
 				<iconSVG>plugins/Morpheus/images/goal.svg</iconSVG>
 				<title>Goal conversion</title>
@@ -157,6 +162,8 @@
 				
 				<pageId>6</pageId>
 				<bandwidth />
+				<timeSpent>0</timeSpent>
+				<timeSpentPretty>0s</timeSpentPretty>
 				<pageviewPosition>1</pageviewPosition>
 				<title>Sixth page view</title>
 				<subtitle>http://example.com/sub_en/page?param=en_US</subtitle>
@@ -176,6 +183,9 @@
 				<goalPageId>6</goalPageId>
 				
 				<url>http://example.com/sub_en/page?param=en_US</url>
+				<referrerType>direct</referrerType>
+				<referrerName />
+				<referrerKeyword />
 				<icon>plugins/Morpheus/images/goal.png</icon>
 				<iconSVG>plugins/Morpheus/images/goal.svg</iconSVG>
 				<title>Goal conversion</title>
@@ -298,6 +308,8 @@
 				
 				<pageId>5</pageId>
 				<bandwidth />
+				<timeSpent>0</timeSpent>
+				<timeSpentPretty>0s</timeSpentPretty>
 				<pageviewPosition>1</pageviewPosition>
 				<title>Fifth page view</title>
 				<subtitle>http://example.com/sub_en/page?param=en_US</subtitle>
@@ -317,6 +329,9 @@
 				<goalPageId>5</goalPageId>
 				
 				<url>http://example.com/sub_en/page?param=en_US</url>
+				<referrerType>direct</referrerType>
+				<referrerName />
+				<referrerKeyword />
 				<icon>plugins/Morpheus/images/goal.png</icon>
 				<iconSVG>plugins/Morpheus/images/goal.svg</iconSVG>
 				<title>Goal conversion</title>
@@ -481,6 +496,9 @@
 				<goalPageId>2</goalPageId>
 				
 				<url>http://example.com/sub_en/page?test=343&amp;param=23</url>
+				<referrerType>direct</referrerType>
+				<referrerName />
+				<referrerKeyword />
 				<icon>plugins/Morpheus/images/goal.png</icon>
 				<iconSVG>plugins/Morpheus/images/goal.svg</iconSVG>
 				<title>Goal conversion</title>
@@ -498,6 +516,8 @@
 				
 				<pageId>3</pageId>
 				<bandwidth />
+				<timeSpent>0</timeSpent>
+				<timeSpentPretty>0s</timeSpentPretty>
 				<pageviewPosition>3</pageviewPosition>
 				<title>Third page view</title>
 				<subtitle>http://example.com/sub_en/page?param=en_US</subtitle>
@@ -622,6 +642,8 @@
 				
 				<pageId>9</pageId>
 				<bandwidth />
+				<timeSpent>0</timeSpent>
+				<timeSpentPretty>0s</timeSpentPretty>
 				<pageviewPosition>1</pageviewPosition>
 				<title>Viewing homepage</title>
 				<subtitle>http://example.com/sub_en/page</subtitle>
@@ -641,6 +663,9 @@
 				<goalPageId>9</goalPageId>
 				
 				<url>http://example.com/sub_en/page</url>
+				<referrerType>direct</referrerType>
+				<referrerName />
+				<referrerKeyword />
 				<icon>plugins/Morpheus/images/goal.png</icon>
 				<iconSVG>plugins/Morpheus/images/goal.svg</iconSVG>
 				<title>Goal conversion</title>

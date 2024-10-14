@@ -11,10 +11,7 @@ namespace Piwik\Plugins\API\tests\Unit;
 use Piwik\Category\Category;
 use Piwik\Category\CategoryList;
 use Piwik\Category\Subcategory;
-use Piwik\DataTable;
-use Piwik\Plugins\API\Renderer\Console;
 use Piwik\Plugins\API\WidgetMetadata;
-use Piwik\Plugins\CoreHome\CoreHome;
 use Piwik\Report\ReportWidgetConfig;
 use Piwik\Widget\WidgetConfig;
 use Piwik\Widget\WidgetContainerConfig;
@@ -51,6 +48,7 @@ class WidgetMetadataTest extends \PHPUnit\Framework\TestCase
                 'order' => 99,
                 'icon' => '',
                 'help' => '',
+                'widget' => null,
             ),
             'subcategory' => array(
                 'id' => 'SubcategoryId',
@@ -92,6 +90,7 @@ class WidgetMetadataTest extends \PHPUnit\Framework\TestCase
             'order' => 99,
             'icon' => '',
             'help' => '',
+            'widget' => null,
         ), $metadata['category']);
         $this->assertNull($metadata['subcategory']);
     }
@@ -146,6 +145,7 @@ class WidgetMetadataTest extends \PHPUnit\Framework\TestCase
                 'order' => 99,
                 'icon' => '',
                 'help' => '',
+                'widget' => null,
             ),
             'subcategory' => array (
                 'id' => 'NestedSubcategory1',
@@ -171,6 +171,7 @@ class WidgetMetadataTest extends \PHPUnit\Framework\TestCase
                 'order' => 99,
                 'icon' => '',
                 'help' => '',
+                'widget' => null,
             ),
             'subcategory' => array (
                 'id' => 'NestedSubcategory2',
@@ -212,6 +213,7 @@ class WidgetMetadataTest extends \PHPUnit\Framework\TestCase
                 'order' => 99,
                 'icon' => '',
                 'help' => '',
+                'widget' => null,
             ],
             'subcategory' => [
                 'id' => 'Subcategory2',
@@ -254,6 +256,7 @@ class WidgetMetadataTest extends \PHPUnit\Framework\TestCase
                 'order' => 99,
                 'icon' => '',
                 'help' => '',
+                'widget' => null,
             ),
             'subcategory' => array (
                 'id' => 'NestedSubcategory1',

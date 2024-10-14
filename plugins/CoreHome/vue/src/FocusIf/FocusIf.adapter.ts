@@ -21,8 +21,8 @@ function piwikFocusIf(): IDirective {
       scope.$watch(attrs.piwikFocusIf, (newValue) => {
         const binding = {
           instance: null,
-          arg: newValue ? '1' : undefined,
           value: {
+            focused: newValue ? true : undefined,
             afterFocus: () => scope.$apply(),
           },
           oldValue: null,
@@ -36,4 +36,4 @@ function piwikFocusIf(): IDirective {
   };
 }
 
-angular.module('piwikApp.directive').directive('piwikFocusIf', piwikFocusIf);
+window.angular.module('piwikApp.directive').directive('piwikFocusIf', piwikFocusIf);

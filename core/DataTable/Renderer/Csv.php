@@ -192,15 +192,6 @@ class Csv extends Renderer
 
         $csv = $this->makeArrayFromDataTable($table, $allColumns);
 
-        // now we make sure that all the rows in the CSV array have all the columns
-        foreach ($csv as &$row) {
-            foreach ($allColumns as $columnName => $true) {
-                if (!isset($row[$columnName])) {
-                    $row[$columnName] = '';
-                }
-            }
-        }
-
         $str = $this->buildCsvString($allColumns, $csv);
         return $str;
     }
@@ -236,7 +227,7 @@ class Csv extends Renderer
      * @param mixed $value
      * @return string
      */
-    protected function formatValue($value)
+    public function formatValue($value)
     {
         if (is_string($value)
             && !is_numeric($value)
@@ -248,11 +239,17 @@ class Csv extends Renderer
 
         $value = $this->formatFormulas($value);
 
-        if (is_string($value)
-            && (strpos($value, '"') !== false
-                || strpos($value, $this->separator) !== false)
-        ) {
-            $value = '"' . str_replace('"', '""', $value) . '"';
+        if (is_string($value)) {
+            $value = str_replace(["\t"], ' ', $value);
+
+            // surround value with double quotes if it contains a double quote or a commonly used separator
+            if (strpos($value, '"') !== false
+                || strpos($value, $this->separator) !== false
+                || strpos($value, ',') !== false
+                || strpos($value, ';') !== false
+            ) {
+                $value = '"' . str_replace('"', '""', $value) . '"';
+            }
         }
 
         // in some number formats (e.g. German), the decimal separator is a comma
@@ -390,7 +387,7 @@ class Csv extends Renderer
         foreach ($csv as $theRow) {
             $rowStr = '';
             foreach ($allColumns as $columnName => $true) {
-                $rowStr .= $this->formatValue($theRow[$columnName]) . $this->separator;
+                $rowStr .= $this->formatValue($theRow[$columnName] ?? '') . $this->separator;
             }
             // remove the last separator
             $rowStr = substr_replace($rowStr, "", -strlen($this->separator));
@@ -488,10 +485,16 @@ class Csv extends Renderer
      */
     protected function removeFirstPercentSign($value)
     {
-        $needle = '%';
-        $posPercent = strpos($value, $needle);
+        // remove all null byte chars from the beginning
+        $value = ltrim($value, "\0");
+
+        while (0 === strpos($value, '%00')) {
+            $value = ltrim(substr($value, 3), "\0");
+        }
+
+        $posPercent = strpos($value ?? '', '%');
         if ($posPercent !== false) {
-            return substr_replace($value, '', $posPercent, strlen($needle));
+            return substr_replace($value, '', $posPercent, 1);
         }
         return $value;
     }

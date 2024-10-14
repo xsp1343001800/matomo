@@ -8,17 +8,13 @@
  */
 namespace Piwik\Plugins\ScheduledReports;
 
-use Faker\Provider\Image;
 use Piwik\Access;
 use Piwik\API\Request;
 use Piwik\Common;
-use Piwik\Config;
-use Piwik\Date;
 use Piwik\Nonce;
 use Piwik\Piwik;
 use Piwik\Plugins\ImageGraph\ImageGraph;
 use Piwik\Plugins\LanguagesManager\LanguagesManager;
-use Piwik\Plugins\SegmentEditor\API as APISegmentEditor;
 use Piwik\Plugins\SitesManager\API as APISitesManager;
 use Piwik\View;
 
@@ -142,17 +138,17 @@ class Controller extends \Piwik\Plugin\Controller
         $subscriptionModel = new SubscriptionModel();
         $subscription      = $subscriptionModel->getSubscription($token);
 
-        $report = Access::doAsSuperUser(function() use ($subscription) {
-            $reports = Request::processRequest('ScheduledReports.getReports', array(
-                'idReport'    => $subscription['idreport'],
-            ));
-            return reset($reports);
-        });
-
         if (empty($subscription)) {
             $view->error = Piwik::translate('ScheduledReports_NoSubscriptionFound');
             return $view->render();
         }
+
+        $report = Access::doAsSuperUser(function() use ($subscription) {
+            $reports = Request::processRequest('ScheduledReports.getReports', [
+                'idReport'    => $subscription['idreport'],
+            ]);
+            return reset($reports);
+        });
 
         $confirm = Common::getRequestVar('confirm', '', 'string');
 

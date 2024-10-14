@@ -14,7 +14,6 @@ use Piwik\Archive\ArchiveInvalidator;
 use Piwik\ArchiveProcessor\Rules;
 use Piwik\Common;
 use Piwik\Container\StaticContainer;
-use Piwik\CronArchive;
 use Piwik\Date;
 use Piwik\Db;
 use Piwik\Period\Range;
@@ -186,7 +185,8 @@ class SegmentArchiving
         }
 
         // check for a later ts_last_edit timestamp
-        $lastEditTime = empty($storedSegment['ts_last_edit']) ? null : Date::factory($storedSegment['ts_last_edit']);
+        $lastEditTime = empty($storedSegment['ts_last_edit']) || $storedSegment['ts_last_edit'] == '0000-00-00 00:00:00'
+            ? null : Date::factory($storedSegment['ts_last_edit']);
 
         return array($createdTime, $lastEditTime);
     }

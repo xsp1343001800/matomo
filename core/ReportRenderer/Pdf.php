@@ -12,10 +12,10 @@ use Piwik\Common;
 use Piwik\Filesystem;
 use Piwik\NumberFormatter;
 use Piwik\Piwik;
-use Piwik\Plugins\API\API;
 use Piwik\Plugins\CoreAdminHome\CustomLogo;
 use Piwik\ReportRenderer;
 use Piwik\TCPDF;
+use TCPDF_FONTS;
 
 /**
  * @see libs/tcpdf
@@ -39,6 +39,8 @@ class Pdf extends ReportRenderer
     const NO_DATA_ROW_COUNT = 6;
     const MAX_GRAPH_REPORTS = 3;
     const MAX_2COL_TABLE_REPORTS = 2;
+
+    const IMPORT_FONT_PATH = 'plugins/ImageGraph/fonts/unifont.ttf';
 
     const PDF_CONTENT_TYPE = 'pdf';
 
@@ -136,6 +138,10 @@ class Pdf extends ReportRenderer
         }
         // WARNING: Did you read the warning above?
 
+        // When user follow the FAQ https://matomo.org/faq/how-to-install/faq_142/, imported unifont font, it will apply across the entire report
+        if (is_file(self::IMPORT_FONT_PATH)) {
+            $reportFont = TCPDF_FONTS::addTTFfont(self::IMPORT_FONT_PATH, 'TrueTypeUnicode');
+        }
         $this->reportFont = $reportFont;
     }
 
@@ -163,7 +169,7 @@ class Pdf extends ReportRenderer
 
     public function getRenderedReport()
     {
-        return $this->TCPDF->Output(null, 'S');
+        return $this->TCPDF->Output('', 'S');
     }
 
     public function renderFrontPage($reportTitle, $prettyDate, $description, $reportMetadata, $segment)
@@ -173,7 +179,7 @@ class Pdf extends ReportRenderer
 
         // footer
         $this->TCPDF->SetFooterFont(array($this->reportFont, $this->reportFontStyle, $this->reportSimpleFontSize));
-        $this->TCPDF->SetFooterContent($reportTitle . " | " . $dateRange . " | ");
+        $this->TCPDF->SetFooterContent((strlen($reportTitle) > 64 ? substr($reportTitle,0, 61) . "..." : $reportTitle) . " | " . $dateRange . " | ");
 
         // add first page
         $this->TCPDF->setPrintHeader(false);
@@ -190,16 +196,17 @@ class Pdf extends ReportRenderer
         // report title
         $this->TCPDF->SetFont($this->reportFont, '', $this->reportHeaderFontSize + 5);
         $this->TCPDF->SetTextColor($this->headerTextColor[0], $this->headerTextColor[1], $this->headerTextColor[2]);
-        $this->TCPDF->Cell(40, 210, $reportTitle);
-        $this->TCPDF->Ln(8 * 4);
+        $this->TCPDF->SetXY(10, 119);
+        $this->TCPDF->MultiCell(0, 40, $reportTitle, 0, 'L');
 
         // date and period
+        $this->TCPDF->SetXY(10, 152);
         $this->TCPDF->SetFont($this->reportFont, '', $this->reportHeaderFontSize);
         $this->TCPDF->SetTextColor($this->reportTextColor[0], $this->reportTextColor[1], $this->reportTextColor[2]);
-        $this->TCPDF->Cell(40, 210, $dateRange);
-        $this->TCPDF->Ln(8 * 20);
+        $this->TCPDF->MultiCell(0, 40, $dateRange, 0, 'L');
 
         // description
+        $this->TCPDF->SetXY(10, 210);
         $this->TCPDF->Write(1, $this->formatText($description));
 
         // segment
@@ -370,7 +377,7 @@ class Pdf extends ReportRenderer
                     $posX = $this->TCPDF->GetX();
                     $posY = $this->TCPDF->GetY();
                     if (isset($rowMetrics[$columnId])) {
-                        $text = substr($rowMetrics[$columnId], 0, $this->truncateAfter);
+                        $text = mb_substr($rowMetrics[$columnId], 0, $this->truncateAfter);
                         if ($isLogoDisplayable) {
                             $text = $leftSpacesBeforeLogo . $text;
                         }

@@ -13,12 +13,20 @@
     display: none !important;
 }
 
+#generalSettingsTOC a {
+    text-transform: none !important;
+}
+
 #content.admin {
     font-size: 13px;
     margin-top: 0;
 
     // Fix the <pre> blocks because of the display: table
     pre {
+        max-width: 995px;
+    }
+
+    .copyToClipboardWrapper {
         max-width: 995px;
     }
 }

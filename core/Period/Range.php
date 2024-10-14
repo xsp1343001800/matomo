@@ -169,7 +169,7 @@ class Range extends Period
         return $out;
     }
 
-    protected function getMaxN($lastN)
+    protected function getMaxN(int $lastN): int
     {
         switch ($this->strPeriod) {
             case 'day':
@@ -244,7 +244,7 @@ class Range extends Period
                 }
             }
 
-            $lastN = $this->getMaxN($lastN);
+            $lastN = $this->getMaxN((int) $lastN);
 
             // last1 means only one result ; last2 means 2 results so we remove only 1 to the days/weeks/etc
             $lastN--;
@@ -263,7 +263,13 @@ class Range extends Period
             if (strpos($strDateEnd, '-') === false) {
                 $timezone = $this->timezone;
             }
-            $endDate = Date::factory($strDateEnd, $timezone);
+
+            $endDate = Date::factory($strDateEnd, $timezone)->setTime("00:00:00");
+            $maxAllowedEndDate = Date::factory(self::getMaxAllowedEndTimestamp());
+
+            if ($endDate->isLater($maxAllowedEndDate)) {
+                $endDate = $maxAllowedEndDate;
+            }
         } else {
             throw new Exception($this->translator->translate('General_ExceptionInvalidDateRange', array($this->strDate, ' \'lastN\', \'previousN\', \'YYYY-MM-DD,YYYY-MM-DD\'')));
         }
@@ -498,6 +504,16 @@ class Range extends Period
         return array($strLastDate, $lastPeriod);
     }
 
+    /**
+     * Return the number of days contained in this range
+     *
+     * @return int
+     * @throws Exception
+     */
+    public function getDayCount()
+    {
+         return (self::getNumDaysDifference($this->getDateStart(), $this->getDateEnd()) + 1);
+    }
 
     private static function getNumDaysDifference(Date $date1, Date $date2)
     {
@@ -568,5 +584,20 @@ class Range extends Period
     public function getParentPeriodLabel()
     {
         return null;
+    }
+
+    /**
+     * Returns the max allowed end timestamp for a range. If an enddate after this timestamp is provided, Matomo will
+     * automatically lower the end date to the date returned by this method.
+     * The max supported timestamp is always set to end of the current year plus 10 years.
+     *
+     * @return int
+     * @api
+     */
+    public static function getMaxAllowedEndTimestamp(): int
+    {
+        return strtotime(
+            date('Y-12-31 00:00:00', strtotime('+10 year', Date::getNowTimestamp()))
+        );
     }
 }

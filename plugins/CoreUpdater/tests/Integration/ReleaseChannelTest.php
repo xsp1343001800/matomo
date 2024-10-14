@@ -8,10 +8,8 @@
 
 namespace Piwik\Plugins\CoreUpdater\tests\ReleaseChannel;
 
-use Piwik\Config;
 use Piwik\Db;
 use Piwik\Plugins\CoreUpdater\ReleaseChannel;
-use Piwik\UpdateCheck;
 use Piwik\Tests\Framework\TestCase\IntegrationTestCase;
 use Piwik\Url;
 use Piwik\Version;
@@ -50,7 +48,7 @@ class ReleaseChannelTest extends IntegrationTestCase
 
     public function test_getDownloadUrlWithoutScheme_shouldReturnUrlWithVersionNumberButWithoutScheme()
     {
-        $this->assertSame('://builds.matomo.org/piwik-2.15.0-b5.zip', $this->channel->getDownloadUrlWithoutScheme('2.15.0-b5'));
+        $this->assertSame('://builds.matomo.org/matomo-2.15.0-b5.zip', $this->channel->getDownloadUrlWithoutScheme('2.15.0-b5'));
     }
 
     public function test_getUrlToCheckForLatestAvailableVersion()

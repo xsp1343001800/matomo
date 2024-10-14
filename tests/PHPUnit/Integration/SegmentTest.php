@@ -10,18 +10,24 @@ namespace Piwik\Tests\Integration;
 
 use Exception;
 use Piwik\ArchiveProcessor\Rules;
+use Piwik\Columns\Dimension;
+use Piwik\Columns\DimensionMetricFactory;
+use Piwik\Columns\MetricsList;
 use Piwik\Common;
 use Piwik\Config;
 use Piwik\Container\StaticContainer;
 use Piwik\Date;
 use Piwik\Db;
-use Piwik\Http;
+use Piwik\DbHelper;
+use Piwik\Piwik;
+use Piwik\Plugin\ArchivedMetric;
 use Piwik\Plugins\SegmentEditor\API;
 use Piwik\Segment;
 use Piwik\Tests\Framework\Fixture;
 use Piwik\Tests\Framework\Mock\FakeAccess;
 use Piwik\Tests\Framework\TestCase\IntegrationTestCase;
 use Piwik\Tracker\Action;
+use Piwik\Tracker\LogTable;
 use Piwik\Tracker\TableLogAction;
 use Piwik\Plugins\SegmentEditor\API as SegmentEditorApi;
 
@@ -155,6 +161,143 @@ class SegmentTest extends IntegrationTestCase
         );
 
         $segment = new Segment($segment, $idSites = array());
+        $sql = $segment->getSelectQuery($select, $from, false);
+        $this->assertQueryDoesNotFail($sql);
+
+        $this->assertEquals($this->removeExtraWhiteSpaces($expected), $this->removeExtraWhiteSpaces($sql));
+
+        // calling twice should give same results
+        $sql = $segment->getSelectQuery($select, array($from));
+        $this->assertEquals($this->removeExtraWhiteSpaces($expected), $this->removeExtraWhiteSpaces($sql));
+
+        $this->assertEquals(32, strlen($segment->getHash()));
+    }
+
+    /**
+     * @return iterable<string, array{string, string, array{where: string, bind: string}}>
+     */
+    public function getCommonSubqueryTestData(): iterable
+    {
+        $encodedValueOr = urlencode(urlencode('a,b'));
+        $encodedValueAnd = urlencode(urlencode('a;b'));
+        $escapedValueOr = urlencode(urlencode('a\,b'));
+        $escapedValueAnd = urlencode(urlencode('a\;b'));
+
+        $segmentFrom = '2020-02-02 02:00:00';
+
+        $whereSingle = '( log_visit.idvisit NOT IN ( SELECT log_visit.idvisit FROM log_visit AS log_visit LEFT JOIN log_link_visit_action AS log_link_visit_action ON log_link_visit_action.idvisit = log_visit.idvisit WHERE ( log_visit.visit_last_action_time >= ? ) AND ( log_link_visit_action.idaction_name = ? )) ) ';
+        $whereMultiAnd = '( log_visit.idvisit NOT IN ( SELECT log_visit.idvisit FROM log_visit AS log_visit LEFT JOIN log_link_visit_action AS log_link_visit_action ON log_link_visit_action.idvisit = log_visit.idvisit WHERE ( log_visit.visit_last_action_time >= ? ) AND ( log_link_visit_action.idaction_name = ? )) ) AND ( log_visit.idvisit NOT IN ( SELECT log_visit.idvisit FROM log_visit AS log_visit LEFT JOIN log_link_visit_action AS log_link_visit_action ON log_link_visit_action.idvisit = log_visit.idvisit WHERE ( log_visit.visit_last_action_time >= ? ) AND ( log_link_visit_action.idaction_name = ? )) ) ';
+        $whereMultiOr = '(( log_visit.idvisit NOT IN ( SELECT log_visit.idvisit FROM log_visit AS log_visit LEFT JOIN log_link_visit_action AS log_link_visit_action ON log_link_visit_action.idvisit = log_visit.idvisit WHERE ( log_visit.visit_last_action_time >= ? ) AND ( log_link_visit_action.idaction_name = ? )) ) OR ( log_visit.idvisit NOT IN ( SELECT log_visit.idvisit FROM log_visit AS log_visit LEFT JOIN log_link_visit_action AS log_link_visit_action ON log_link_visit_action.idvisit = log_visit.idvisit WHERE ( log_visit.visit_last_action_time >= ? ) AND ( log_link_visit_action.idaction_name = ? )) ) )';
+
+        yield 'normal segment' => [
+            'pageTitle!=a',
+            $segmentFrom,
+            [
+                'where' => $whereSingle,
+                'bind' => [$segmentFrom, '1'],
+            ],
+        ];
+
+        yield 'segment with AND in value' => [
+            'pageTitle!=' . $encodedValueAnd,
+            $segmentFrom,
+            [
+                'where' => $whereSingle,
+                'bind' => [$segmentFrom, '3'],
+            ],
+        ];
+
+        yield 'segment with AND in value, already escaped' => [
+            'pageTitle!=' . $escapedValueAnd,
+            $segmentFrom,
+            [
+                'where' => $whereSingle,
+                'bind' => [$segmentFrom, '3'],
+            ],
+        ];
+
+        yield 'segment with OR in value' => [
+            'pageTitle!=' . $encodedValueOr,
+            $segmentFrom,
+            [
+                'where' => $whereSingle,
+                'bind' => [$segmentFrom, '4'],
+            ],
+        ];
+
+        yield 'segment with OR in value, already escaped' => [
+            'pageTitle!=' . $escapedValueOr,
+            $segmentFrom,
+            [
+                'where' => $whereSingle,
+                'bind' => [$segmentFrom, '4'],
+            ],
+        ];
+
+        yield 'segment with two values, AND operator' => [
+            'pageTitle!=a;pageTitle!=b',
+            $segmentFrom,
+            [
+                'where' => $whereMultiAnd,
+                'bind' => [$segmentFrom, '1', $segmentFrom, '2'],
+            ],
+        ];
+
+        yield 'segment with two values, OR operator' => [
+            'pageTitle!=a,pageTitle!=b',
+            $segmentFrom,
+            [
+                'where' => $whereMultiOr,
+                'bind' => [$segmentFrom, '1', $segmentFrom, '2'],
+            ],
+        ];
+
+        yield 'mixed operator in value and two segments' => [
+            'pageTitle!=' . $encodedValueAnd . ';pageTitle!=' . $encodedValueOr,
+            $segmentFrom,
+            [
+                'where' => $whereMultiAnd,
+                'bind' => [$segmentFrom, '3', $segmentFrom, '4'],
+            ],
+        ];
+
+        yield 'mixed operator in value and two segments, already escaped' => [
+            'pageTitle!=' . $escapedValueAnd . ',pageTitle!=' . $escapedValueOr,
+            $segmentFrom,
+            [
+                'where' => $whereMultiOr,
+                'bind' => [$segmentFrom, '3', $segmentFrom, '4'],
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider getCommonSubqueryTestData
+     *
+     * @param array{where: string, bind: string} $expected
+     */
+    public function testCommonSubquery(string $segment, string $segmentFrom, array $expected): void
+    {
+        $this->insertPageUrlAsAction('a', 'idaction_name', Action::TYPE_PAGE_TITLE);
+        $this->insertPageUrlAsAction('b', 'idaction_name', Action::TYPE_PAGE_TITLE);
+        $this->insertPageUrlAsAction('a;b', 'idaction_name', Action::TYPE_PAGE_TITLE);
+        $this->insertPageUrlAsAction('a,b', 'idaction_name', Action::TYPE_PAGE_TITLE);
+
+        $select = 'log_visit.idvisit';
+        $from = 'log_visit';
+
+        $expected = array(
+            'sql'  => '
+                SELECT
+                    log_visit.idvisit
+                FROM
+                    ' . Common::prefixTable('log_visit') . ' AS log_visit
+                WHERE
+                    ' . $expected['where'],
+            'bind' => $expected['bind']
+        );
+
+        $segment = new Segment($segment, $idSites = array(), Date::factory($segmentFrom));
         $sql = $segment->getSelectQuery($select, $from, false);
         $this->assertQueryDoesNotFail($sql);
 
@@ -1805,15 +1948,42 @@ log_visit.visit_total_actions
         $this->assertEquals($this->removeExtraWhiteSpaces($expected), $this->removeExtraWhiteSpaces($query));
     }
 
+    public function test_getSelectQuery_whenJoinCustomLogTableTwoTablesRemovedFromLogVisitFirst_thenJoinTableAdjacentToLogVisit()
+    {
+        $this->defineEntitiesNotDirectlyJoinableToVisit();
+
+        $segment = new Segment('', $idSites = array());
+
+        $select = 'count(distinct log_thing.idlogthing) as nb_things, count(log_thing_event.idlogthingevent) as nb_thing_events';
+        $from = [
+            'log_thing',
+            'log_thing_event',
+        ];
+        $where = '';
+        $bind = [];
+
+        $query = $segment->getSelectQuery($select, $from, $where, $bind, $orderBy = false);
+        $this->assertQueryDoesNotFail($query);
+
+        $expected = <<<SQL
+ SELECT count(distinct log_thing.idlogthing) as nb_things, count(log_thing_event.idlogthingevent) as nb_thing_events FROM log_thing AS log_thing LEFT JOIN log_thing_event AS log_thing_event ON `log_thing_event`.`idlogthing` = `log_thing`.`idlogthing`
+SQL;
+
+        $sql = $this->removeExtraWhiteSpaces($query['sql']);
+        $expected = $this->removeExtraWhiteSpaces($expected);
+
+        $this->assertEquals($expected, $sql);
+    }
+
     /**
      * @param $pageUrlFoundInDb
      * @return string
      * @throws Exception
      */
-    private function insertPageUrlAsAction($pageUrlFoundInDb)
+    private function insertPageUrlAsAction($pageUrlFoundInDb, $idActionColumn = 'idaction_url', $idActionType = Action::TYPE_PAGE_URL)
     {
         TableLogAction::loadIdsAction(array(
-            'idaction_url' => array($pageUrlFoundInDb, Action::TYPE_PAGE_URL)
+            $idActionColumn => array($pageUrlFoundInDb, $idActionType)
         ));
 
         $actionIdFoundInDb = Db::fetchOne("SELECT idaction from " . Common::prefixTable('log_action') . " WHERE name = ?", $pageUrlFoundInDb);
@@ -2062,5 +2232,169 @@ log_visit.visit_total_actions
         parent::configureFixture($fixture);
         $fixture->createSuperUser = true;
         $fixture->extraPluginsToLoad = ['ExamplePlugin'];
+    }
+
+    private function defineEntitiesNotDirectlyJoinableToVisit()
+    {
+        // create database tables
+        DbHelper::createTable('log_thing', '
+            `idlogthing` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+            `idsite` INT UNSIGNED NOT NULL,
+            `value` INT UNSIGNED NOT NULL,
+            `name` VARCHAR(100) NOT NULL DEFAULT \'\',
+            PRIMARY KEY (`idlogthing`)
+        ');
+        DbHelper::createTable('log_thing_event', '
+            `idlogthingevent` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+            `idsite` INT UNSIGNED NOT NULL,
+            `idlogthing` BIGINT UNSIGNED NOT NULL,
+            `idvisit` BIGINT(10) UNSIGNED NOT NULL,
+            `server_time` DATETIME NOT NULL,
+            `category` VARCHAR(50) NOT NULL DEFAULT \'\',
+            PRIMARY KEY (`idlogthingevent`)
+        ');
+
+        // add logtable classes
+        $logThings = new class() extends LogTable {
+            public function getName()
+            {
+                return 'log_thing';
+            }
+
+            public function getIdColumn()
+            {
+                return 'idlogthing';
+            }
+
+            public function getPrimaryKey()
+            {
+                return ['idlogthing'];
+            }
+
+            public function getWaysToJoinToOtherLogTables()
+            {
+                return ['log_thing_event' => 'idlogthing'];
+            }
+        };
+
+        $logThingEvents = new class() extends LogTable {
+            public function getname()
+            {
+                return 'log_thing_event';
+            }
+
+            public function getIdColumn()
+            {
+                return 'idlogthingevent';
+            }
+
+            public function getColumnToJoinOnIdVisit()
+            {
+                return 'idvisit';
+            }
+
+            public function getPrimaryKey()
+            {
+                return array('idlogthingevent');
+            }
+
+            public function getDateTimeColumn()
+            {
+                return 'server_time';
+            }
+        };
+
+        Piwik::addAction('LogTables.addLogTables', function (&$logTables) use ($logThings, $logThingEvents) {
+            $logTables[] = $logThings;
+            $logTables[] = $logThingEvents;
+        });
+
+        // add Dimension classes
+        $thingEventIdDimension = new class() extends Dimension {
+            protected $nameSingular = 'CustomReports_ThingEvent';
+            protected $namePlural = 'CustomReports_ThingEvents';
+            protected $segmentName = 'thingEventId';
+            protected $category = 'CustomReports_Things';
+            protected $dbTableName = 'log_thing_event';
+            protected $columnName = 'idlogthingevent';
+            protected $sqlSegment = 'log_thing_event.idlogthingevent';
+
+            public function getId()
+            {
+                return 'CustomReports.ThingEvent';
+            }
+
+            public function configureMetrics(MetricsList $metricsList, DimensionMetricFactory $dimensionMetricFactory)
+            {
+                $metric = $dimensionMetricFactory->createCustomMetric('nb_things', 'things', ArchivedMetric::AGGREGATION_COUNT);
+                $metricsList->addMetric($metric);
+            }
+        };
+
+        $thingValueDimension = new class() extends Dimension {
+            protected $nameSingular = 'CustomReports_ThingValue';
+            protected $namePlural = 'CustomReports_ThingValues';
+            protected $segmentName = 'thingValue';
+            protected $category = 'CustomReports_Things';
+            protected $dbTableName = 'log_thing';
+            protected $columnName = 'value';
+            protected $sqlSegment = 'log_thing.value';
+
+            public function getId()
+            {
+                return 'CustomReports.ThingValue';
+            }
+
+            public function configureMetrics(MetricsList $metricsList, DimensionMetricFactory $dimensionMetricFactory)
+            {
+                parent::configureMetrics($metricsList, $dimensionMetricFactory);
+
+                $metric = $dimensionMetricFactory->createCustomMetric('sum_thing_value', 'thing value', ArchivedMetric::AGGREGATION_SUM);
+                $metricsList->addMetric($metric);
+
+                $metric = $dimensionMetricFactory->createCustomMetric('max_thing_value', 'thing value', ArchivedMetric::AGGREGATION_MAX);
+                $metricsList->addMetric($metric);
+
+                $metric = $dimensionMetricFactory->createCustomMetric('min_thing_value', 'thing value', ArchivedMetric::AGGREGATION_MIN);
+                $metricsList->addMetric($metric);
+            }
+        };
+
+        $thingNameDimension = new class() extends Dimension {
+            protected $nameSingular = 'CustomReports_ThingName';
+            protected $namePlural = 'CustomReports_ThingNames';
+            protected $segmentName = 'thingName';
+            protected $category = 'CustomReports_Things';
+            protected $dbTableName = 'log_thing';
+            protected $columnName = 'name';
+            protected $sqlSegment = 'log_thing.name';
+
+            public function getId()
+            {
+                return 'CustomReports.ThingName';
+            }
+        };
+
+        $thingCategoryDimension = new class() extends Dimension {
+            protected $nameSingular = 'CustomReports_ThingCategory';
+            protected $namePlural = 'CustomReports_ThingCategories';
+            protected $segmentName = 'thingCategory';
+            protected $category = 'CustomReports_Things';
+            protected $dbTableName = 'log_thing_event';
+            protected $columnName = 'category';
+            protected $sqlSegment = 'log_thing_event.category';
+
+            public function getId()
+            {
+                return 'CustomReports.ThingCategory';
+            }
+        };
+
+        Piwik::addAction('Dimension.addDimensions', function (&$dimensions) use ($thingEventIdDimension, $thingValueDimension, $thingNameDimension, $thingCategoryDimension) {
+            $dimensions[] = $thingEventIdDimension;
+            $dimensions[] = $thingValueDimension;
+            $dimensions[] = $thingNameDimension;
+            $dimensions[] = $thingCategoryDimension;
+        });
     }
 }

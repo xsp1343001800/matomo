@@ -53,6 +53,11 @@ class Console extends Application
         );
 
         $this->getDefinition()->addOption($option);
+
+        $option = new InputOption('ignore-warn', null, InputOption::VALUE_NONE,
+            'Return 0 exit code even if there are warning logs or error logs detected in the command output.');
+
+        $this->getDefinition()->addOption($option);
     }
 
     public function renderException($e, $output)
@@ -91,6 +96,18 @@ class Console extends Application
         }
     }
 
+    /**
+     * Makes parent doRun method available
+     *
+     * @param InputInterface  $input
+     * @param OutputInterface $output
+     * @return int
+     */
+    public function originDoRun(InputInterface $input, OutputInterface $output)
+    {
+        return parent::doRun($input, $output);
+    }
+
     private function doRunImpl(InputInterface $input, OutputInterface $output)
     {
         if ($input->hasParameterOption('--xhprof')) {
@@ -127,12 +144,15 @@ class Console extends Application
             $self = $this;
             $exitCode = Access::doAsSuperUser(function () use ($input, $output, $self) {
                 return
-                    call_user_func(array($self, 'Symfony\Component\Console\Application::doRun'), $input, $output);
+                    call_user_func(array($self, 'originDoRun'), $input, $output);
             });
         }
 
         $importantLogDetector = StaticContainer::get(FailureLogMessageDetector::class);
-        if ($exitCode === 0 && $importantLogDetector->hasEncounteredImportantLog()) {
+        if (!$input->hasParameterOption('--ignore-warn')
+            && $exitCode === 0
+            && $importantLogDetector->hasEncounteredImportantLog()
+        ) {
             $output->writeln("Error: error or warning logs detected, exit 1");
             $exitCode = 1;
         }

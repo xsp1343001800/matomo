@@ -11,12 +11,12 @@ namespace Piwik;
 use Exception;
 use Piwik\API\Request;
 use Piwik\ArchiveProcessor\Rules;
+use Piwik\Cache as PiwikCache;
 use Piwik\Container\StaticContainer;
 use Piwik\DataAccess\LogQueryBuilder;
 use Piwik\Plugins\SegmentEditor\SegmentEditor;
 use Piwik\Segment\SegmentExpression;
 use Piwik\Plugins\SegmentEditor\Model as SegmentEditorModel;
-use Piwik\Cache;
 
 /**
  * Limits the set of visits Piwik uses when aggregating analytics data.
@@ -125,7 +125,7 @@ class Segment
     {
         $this->segmentQueryBuilder = StaticContainer::get('Piwik\DataAccess\LogQueryBuilder');
 
-        $segmentCondition = trim($segmentCondition);
+        $segmentCondition = trim($segmentCondition ?: '');
         if (!SettingsPiwik::isSegmentationEnabled()
             && !empty($segmentCondition)
         ) {
@@ -180,17 +180,30 @@ class Segment
         return $this->segmentExpression;
     }
 
+    /**
+     * @throws Exception
+     */
     private function getAvailableSegments()
     {
+        // start cache
+        $cache = PiwikCache::getTransientCache();
+
+        //covert cache id
+        $cacheId = 'API.getSegmentsMetadata.'.SettingsPiwik::getPiwikInstanceId() . '.' . implode(",", $this->idSites);
+
+        //fetch cache lockId
+        $this->availableSegments = $cache->fetch($cacheId);
         // segment metadata
         if (empty($this->availableSegments)) {
+
             $this->availableSegments = Request::processRequest('API.getSegmentsMetadata', array(
-                'idSites' => $this->idSites,
-                '_hideImplementationData' => 0,
-                'filter_limit' => -1,
-                'filter_offset' => 0,
-                '_showAllSegments' => 1,
+              'idSites'                 => $this->idSites,
+              '_hideImplementationData' => 0,
+              'filter_limit'            => -1,
+              'filter_offset'           => 0,
+              '_showAllSegments'        => 1,
             ), []);
+            $cache->save($cacheId, $this->availableSegments);
         }
 
         return $this->availableSegments;
@@ -382,7 +395,7 @@ class Segment
         // This is required to ensure segments like actionUrl!@value really do not include any visit having an action containing `value`
         if ($this->doesSegmentNeedSubquery($matchType, $name)) {
             $operator = $this->getInvertedOperatorForSubQuery($matchType);
-            $stringSegment = $name . $operator . $value;
+            $stringSegment = $name . $operator . $this->escapeSegmentValue($value);
             $segmentObj = new Segment($stringSegment, $this->idSites, $this->startDate, $this->endDate);
 
             $select = 'log_visit.idvisit';
@@ -523,7 +536,7 @@ class Segment
      *                           A $groupBy value needs to be set for this to work.
      * @param int If set to value >= 1 then the Select query (and All inner queries) will be LIMIT'ed by this value.
      *              Use only when you're not aggregating or it will sample the data.
-     * @return string The entire select query.
+     * @return array The entire select query.
      */
     public function getSelectQuery($select, $from, $where = false, $bind = array(), $orderBy = false, $groupBy = false, $limit = 0, $offset = 0, $forceGroupBy = false)
     {
@@ -647,5 +660,16 @@ class Segment
     public function getOriginalString()
     {
         return $this->originalString;
+    }
+
+    /**
+     * Escapes segment expression delimiters in a segment value with a backslash if not already done.
+     */
+    private function escapeSegmentValue(string $value): string
+    {
+        $delimiterPattern = SegmentExpression::AND_DELIMITER . SegmentExpression::OR_DELIMITER;
+        $pattern = '/((?<!\\\)[' . preg_quote($delimiterPattern) . '])/';
+
+        return preg_replace($pattern, '\\\$1', $value);
     }
 }

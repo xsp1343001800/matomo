@@ -9,11 +9,10 @@
 namespace Piwik\Tests\Unit\Scheduler;
 
 use Piwik\Date;
-use Piwik\Plugin;
+use Piwik\Option;
 use Piwik\Scheduler\Task;
 use Piwik\Scheduler\Timetable;
 use Piwik\Tests\Framework\Mock\PiwikOption;
-use ReflectionProperty;
 
 /**
  * @group Scheduler
@@ -79,6 +78,21 @@ class TimetableTest extends \PHPUnit\Framework\TestCase
         $timetable->rescheduleTaskAndRunTomorrow($task);
 
         $this->assertEquals(Date::factory('tomorrow')->getTimeStamp(), $timetable->getTimetable()[$task->getName()]);
+    }
+
+    public function testRescheduleTaskAndRunInOneHour()
+    {
+        self::stubPiwikOption(serialize([]));
+
+        $timetable = new Timetable();
+        $task = $this->getMockBuilder(Task::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $task->method('getName')->willReturn('taskName');
+
+        $timetable->rescheduleTaskAndRunInOneHour($task);
+
+        $this->assertEquals(Date::factory('now')->addHour(1)->getTimeStamp(), $timetable->getTimetable()[$task->getName()]);
     }
 
     /**
@@ -156,18 +170,11 @@ class TimetableTest extends \PHPUnit\Framework\TestCase
 
     private static function stubPiwikOption($timetable)
     {
-        self::getReflectedPiwikOptionInstance()->setValue(new PiwikOption($timetable));
+        Option::setSingletonInstance(new PiwikOption($timetable));
     }
 
     private static function resetPiwikOption()
     {
-        self::getReflectedPiwikOptionInstance()->setValue(null);
-    }
-
-    private static function getReflectedPiwikOptionInstance()
-    {
-        $piwikOptionInstance = new ReflectionProperty('Piwik\Option', 'instance');
-        $piwikOptionInstance->setAccessible(true);
-        return $piwikOptionInstance;
+        Option::setSingletonInstance(null);
     }
 }

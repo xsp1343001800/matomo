@@ -10,7 +10,6 @@
 namespace PHPUnit\Unit\CliMulti;
 
 use PHPUnit\Framework\TestCase;
-use Piwik\API\Request;
 use Piwik\CliMulti\RequestParser;
 
 class RequestParserTest extends TestCase
@@ -143,6 +142,7 @@ END;
     private function getMockRequestParser($supportsAsync, $psOutput)
     {
         $mock = new class($supportsAsync, $psOutput) extends RequestParser {
+            public $psOutput;
             public function __construct($supportsAsync, $psOutput)
             {
                 parent::__construct($supportsAsync);

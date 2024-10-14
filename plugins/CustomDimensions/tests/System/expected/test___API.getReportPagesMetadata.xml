@@ -8,6 +8,7 @@
 			<order>10</order>
 			<icon>icon-reporting-actions</icon>
 			<help />
+			<widget />
 		</category>
 		<subcategory>
 			<id>customdimension3</id>
@@ -41,6 +42,7 @@
 			<order>10</order>
 			<icon>icon-reporting-actions</icon>
 			<help />
+			<widget />
 		</category>
 		<subcategory>
 			<id>customdimension5</id>
@@ -74,6 +76,7 @@
 			<order>10</order>
 			<icon>icon-reporting-actions</icon>
 			<help />
+			<widget />
 		</category>
 		<subcategory>
 			<id>VisitorInterest_Engagement</id>
@@ -111,7 +114,7 @@
 				<isReport>1</isReport>
 			</row>
 			<row>
-				<name>Visits by Visit Number</name>
+				<name>Visits by visit number</name>
 				<module>VisitorInterest</module>
 				<action>getNumberOfVisitsByVisitCount</action>
 				<order>125</order>
@@ -125,7 +128,7 @@
 				<isReport>1</isReport>
 			</row>
 			<row>
-				<name>Visits by Days Since Last Visit</name>
+				<name>Visits by days since last visit</name>
 				<module>VisitorInterest</module>
 				<action>getNumberOfVisitsByDaysSinceLast</action>
 				<order>130</order>
@@ -180,12 +183,13 @@
 			<order>10</order>
 			<icon>icon-reporting-actions</icon>
 			<help />
+			<widget />
 		</category>
 		<subcategory>
 			<id>Transitions_Transitions</id>
 			<name>Transitions</name>
 			<order>46</order>
-			<help>&lt;p&gt;Transitions gives you a report that shows the things your visitors did directly before and after viewing a certain page. This page will explain how to access, understand, and use the powerful Transitions report.&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;https://matomo.org/docs/transitions/&quot; rel=&quot;noreferrer noopener&quot; target=&quot;_blank&quot;&gt;More Details&lt;/a&gt;&lt;/p&gt;</help>
+			<help>&lt;p&gt;Transitions is a report showing the things your visitors did directly before and after viewing a given page. This page explains how to access, understand, and use the powerful &quot;Transitions&quot; report.&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;https://matomo.org/docs/transitions/?mtm_campaign=App_Help&amp;mtm_source=Matomo_App&amp;mtm_keyword=UserGuides&quot; rel=&quot;noreferrer noopener&quot; target=&quot;_blank&quot;&gt;More details&lt;/a&gt;&lt;/p&gt;</help>
 		</subcategory>
 		<widgets>
 			<row>
@@ -210,6 +214,7 @@
 			<order>10</order>
 			<icon>icon-reporting-actions</icon>
 			<help />
+			<widget />
 		</category>
 		<subcategory>
 			<id>General_Downloads</id>
@@ -242,6 +247,7 @@
 			<order>10</order>
 			<icon>icon-reporting-actions</icon>
 			<help />
+			<widget />
 		</category>
 		<subcategory>
 			<id>Actions_SubmenuPagesEntry</id>
@@ -288,6 +294,7 @@
 			<order>10</order>
 			<icon>icon-reporting-actions</icon>
 			<help />
+			<widget />
 		</category>
 		<subcategory>
 			<id>Actions_SubmenuPagesExit</id>
@@ -334,6 +341,7 @@
 			<order>10</order>
 			<icon>icon-reporting-actions</icon>
 			<help />
+			<widget />
 		</category>
 		<subcategory>
 			<id>General_Outlinks</id>
@@ -366,6 +374,7 @@
 			<order>10</order>
 			<icon>icon-reporting-actions</icon>
 			<help />
+			<widget />
 		</category>
 		<subcategory>
 			<id>Actions_SubmenuPageTitles</id>
@@ -398,6 +407,7 @@
 			<order>10</order>
 			<icon>icon-reporting-actions</icon>
 			<help />
+			<widget />
 		</category>
 		<subcategory>
 			<id>General_Pages</id>
@@ -430,12 +440,13 @@
 			<order>10</order>
 			<icon>icon-reporting-actions</icon>
 			<help />
+			<widget />
 		</category>
 		<subcategory>
 			<id>Actions_SubmenuSitesearch</id>
 			<name>Site Search</name>
 			<order>25</order>
-			<help>&lt;p&gt;The Site Search section shows which keywords visitors use when searching your website. It also displays which pages users view after performing a search and which on-site search keywords return no results at all.&lt;/p&gt;&lt;p&gt;These reports can give you ideas about missing content on your site, insight into what your visitors are looking for but can’t find easily, and more.&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;https://matomo.org/docs/site-search/&quot; rel=&quot;noreferrer noopener&quot; target=&quot;_blank&quot;&gt;Learn more in the Site Search guide.&lt;/a&gt;&lt;/p&gt;</help>
+			<help>&lt;p&gt;The Site Search section shows which keywords visitors use when searching your website. It also displays which pages users view after performing a search and which on-site search keywords return no results at all.&lt;/p&gt;&lt;p&gt;These reports can give you ideas about missing content on your site, insight into what your visitors are looking for but can’t find easily, and more.&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;https://matomo.org/docs/site-search/?mtm_campaign=App_Help&amp;mtm_source=Matomo_App&amp;mtm_keyword=UserGuides&quot; rel=&quot;noreferrer noopener&quot; target=&quot;_blank&quot;&gt;Learn more in the Site Search guide.&lt;/a&gt;&lt;/p&gt;</help>
 		</subcategory>
 		<widgets>
 			<row>
@@ -518,12 +529,13 @@
 			<order>10</order>
 			<icon>icon-reporting-actions</icon>
 			<help />
+			<widget />
 		</category>
 		<subcategory>
 			<id>Events_Events</id>
 			<name>Events</name>
 			<order>40</order>
-			<help>&lt;p&gt;The Events section offers reports on the custom events associated with your site. Events typically require custom configuration. Once configured you can review reports broken down by category, action and name.&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;https://matomo.org/docs/event-tracking/&quot; rel=&quot;noreferrer noopener&quot; target=&quot;_blank&quot;&gt;Learn more about event tracking here.&lt;/a&gt;&lt;/p&gt;</help>
+			<help>&lt;p&gt;The Events section offers reports on the custom events associated with your site. Events typically require custom configuration. Once configured you can review reports broken down by category, action and name.&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;https://matomo.org/docs/event-tracking/?mtm_campaign=App_Help&amp;mtm_source=Matomo_App&amp;mtm_keyword=UserGuides&quot; rel=&quot;noreferrer noopener&quot; target=&quot;_blank&quot;&gt;Learn more about event tracking here.&lt;/a&gt;&lt;/p&gt;</help>
 		</subcategory>
 		<widgets>
 			<row>
@@ -549,6 +561,7 @@
 							<order>99</order>
 							<icon />
 							<help />
+							<widget />
 						</category>
 						<subcategory>
 							<id>Events_Events</id>
@@ -577,6 +590,7 @@
 							<order>99</order>
 							<icon />
 							<help />
+							<widget />
 						</category>
 						<subcategory>
 							<id>Events_Events</id>
@@ -605,6 +619,7 @@
 							<order>99</order>
 							<icon />
 							<help />
+							<widget />
 						</category>
 						<subcategory>
 							<id>Events_Events</id>
@@ -637,12 +652,13 @@
 			<order>10</order>
 			<icon>icon-reporting-actions</icon>
 			<help />
+			<widget />
 		</category>
 		<subcategory>
 			<id>Contents_Contents</id>
 			<name>Contents</name>
 			<order>45</order>
-			<help>&lt;p&gt;Content tracking helps you determine the popularity of specific pieces of content on any page of your website or app. This section reports the number of impressions and interactions the various pieces of content on your site receive.&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;https://matomo.org/docs/content-tracking/&quot; rel=&quot;noreferrer noopener&quot; target=&quot;_blank&quot;&gt;Learn more in the Content Tracking guide.&lt;/a&gt;&lt;/p&gt;</help>
+			<help>&lt;p&gt;Content tracking helps you determine the popularity of specific pieces of content on any page of your website or app. This section reports the number of impressions and interactions the various pieces of content on your site receive.&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;https://matomo.org/docs/content-tracking/?mtm_campaign=App_Help&amp;mtm_source=Matomo_App&amp;&amp;mtm_keyword=UserGuides&quot; rel=&quot;noreferrer noopener&quot; target=&quot;_blank&quot;&gt;Learn more in the Content Tracking guide.&lt;/a&gt;&lt;/p&gt;</help>
 		</subcategory>
 		<widgets>
 			<row>
@@ -668,6 +684,7 @@
 							<order>99</order>
 							<icon />
 							<help />
+							<widget />
 						</category>
 						<subcategory>
 							<id>Contents_Contents</id>
@@ -695,6 +712,7 @@
 							<order>99</order>
 							<icon />
 							<help />
+							<widget />
 						</category>
 						<subcategory>
 							<id>Contents_Contents</id>
@@ -726,6 +744,7 @@
 			<order>10</order>
 			<icon>icon-reporting-actions</icon>
 			<help />
+			<widget />
 		</category>
 		<subcategory>
 			<id>PagePerformance_Performance</id>
@@ -810,6 +829,7 @@
 			<order>5</order>
 			<icon>icon-reporting-visitors</icon>
 			<help>&lt;p&gt;The Visitors pages tell you things about who your visitors are. Things like where your visitors came from, what devices and browsers they're using and when they generally visit your website. Understand, in the aggregate, who your audience is, and look for outliers to see how your audience could grow.&lt;/p&gt;&lt;p&gt;In addition to general information about your visitors, you can also use the &lt;a href=&quot;#&quot; onclick=&quot;this.href=broadcast.buildReportingUrl('category=General_Visitors&amp;subcategory=Live_VisitorLog')&quot;&gt;Visits Log&lt;/a&gt; to see what occurred in every individual visit.&lt;/p&gt;</help>
+			<widget />
 		</category>
 		<subcategory>
 			<id>customdimension1</id>
@@ -843,6 +863,7 @@
 			<order>5</order>
 			<icon>icon-reporting-visitors</icon>
 			<help>&lt;p&gt;The Visitors pages tell you things about who your visitors are. Things like where your visitors came from, what devices and browsers they're using and when they generally visit your website. Understand, in the aggregate, who your audience is, and look for outliers to see how your audience could grow.&lt;/p&gt;&lt;p&gt;In addition to general information about your visitors, you can also use the &lt;a href=&quot;#&quot; onclick=&quot;this.href=broadcast.buildReportingUrl('category=General_Visitors&amp;subcategory=Live_VisitorLog')&quot;&gt;Visits Log&lt;/a&gt; to see what occurred in every individual visit.&lt;/p&gt;</help>
+			<widget />
 		</category>
 		<subcategory>
 			<id>customdimension2</id>
@@ -876,6 +897,7 @@
 			<order>5</order>
 			<icon>icon-reporting-visitors</icon>
 			<help>&lt;p&gt;The Visitors pages tell you things about who your visitors are. Things like where your visitors came from, what devices and browsers they're using and when they generally visit your website. Understand, in the aggregate, who your audience is, and look for outliers to see how your audience could grow.&lt;/p&gt;&lt;p&gt;In addition to general information about your visitors, you can also use the &lt;a href=&quot;#&quot; onclick=&quot;this.href=broadcast.buildReportingUrl('category=General_Visitors&amp;subcategory=Live_VisitorLog')&quot;&gt;Visits Log&lt;/a&gt; to see what occurred in every individual visit.&lt;/p&gt;</help>
+			<widget />
 		</category>
 		<subcategory>
 			<id>customdimension6</id>
@@ -909,6 +931,7 @@
 			<order>5</order>
 			<icon>icon-reporting-visitors</icon>
 			<help>&lt;p&gt;The Visitors pages tell you things about who your visitors are. Things like where your visitors came from, what devices and browsers they're using and when they generally visit your website. Understand, in the aggregate, who your audience is, and look for outliers to see how your audience could grow.&lt;/p&gt;&lt;p&gt;In addition to general information about your visitors, you can also use the &lt;a href=&quot;#&quot; onclick=&quot;this.href=broadcast.buildReportingUrl('category=General_Visitors&amp;subcategory=Live_VisitorLog')&quot;&gt;Visits Log&lt;/a&gt; to see what occurred in every individual visit.&lt;/p&gt;</help>
+			<widget />
 		</category>
 		<subcategory>
 			<id>DevicesDetection_Devices</id>
@@ -983,6 +1006,7 @@
 			<order>5</order>
 			<icon>icon-reporting-visitors</icon>
 			<help>&lt;p&gt;The Visitors pages tell you things about who your visitors are. Things like where your visitors came from, what devices and browsers they're using and when they generally visit your website. Understand, in the aggregate, who your audience is, and look for outliers to see how your audience could grow.&lt;/p&gt;&lt;p&gt;In addition to general information about your visitors, you can also use the &lt;a href=&quot;#&quot; onclick=&quot;this.href=broadcast.buildReportingUrl('category=General_Visitors&amp;subcategory=Live_VisitorLog')&quot;&gt;Visits Log&lt;/a&gt; to see what occurred in every individual visit.&lt;/p&gt;</help>
+			<widget />
 		</category>
 		<subcategory>
 			<id>DevicesDetection_Software</id>
@@ -1099,6 +1123,7 @@
 			<order>5</order>
 			<icon>icon-reporting-visitors</icon>
 			<help>&lt;p&gt;The Visitors pages tell you things about who your visitors are. Things like where your visitors came from, what devices and browsers they're using and when they generally visit your website. Understand, in the aggregate, who your audience is, and look for outliers to see how your audience could grow.&lt;/p&gt;&lt;p&gt;In addition to general information about your visitors, you can also use the &lt;a href=&quot;#&quot; onclick=&quot;this.href=broadcast.buildReportingUrl('category=General_Visitors&amp;subcategory=Live_VisitorLog')&quot;&gt;Visits Log&lt;/a&gt; to see what occurred in every individual visit.&lt;/p&gt;</help>
+			<widget />
 		</category>
 		<subcategory>
 			<id>General_Overview</id>
@@ -1149,12 +1174,13 @@
 			<order>5</order>
 			<icon>icon-reporting-visitors</icon>
 			<help>&lt;p&gt;The Visitors pages tell you things about who your visitors are. Things like where your visitors came from, what devices and browsers they're using and when they generally visit your website. Understand, in the aggregate, who your audience is, and look for outliers to see how your audience could grow.&lt;/p&gt;&lt;p&gt;In addition to general information about your visitors, you can also use the &lt;a href=&quot;#&quot; onclick=&quot;this.href=broadcast.buildReportingUrl('category=General_Visitors&amp;subcategory=Live_VisitorLog')&quot;&gt;Visits Log&lt;/a&gt; to see what occurred in every individual visit.&lt;/p&gt;</help>
+			<widget />
 		</category>
 		<subcategory>
 			<id>UserCountry_SubmenuLocations</id>
 			<name>Locations</name>
 			<order>10</order>
-			<help>&lt;p&gt;The Locations section is the best way to find out where people are when they visit your site. It reveals the countries, continents, regions, cities that you visitors come from, in tables and map form. Additionally, you can see what language their browser is set to, helping identify international visitors in alternative locations.&lt;/p&gt;</help>
+			<help>&lt;p&gt;The &quot;Locations&quot; section is the best way to find out what countries, continents, regions, and cities your website visitors come from — in table and map form. It also says what language their browser is set to, helping identify international visitors in alternative locations.&lt;/p&gt;</help>
 		</subcategory>
 		<widgets>
 			<row>
@@ -1206,6 +1232,7 @@
 							<order>99</order>
 							<icon />
 							<help />
+							<widget />
 						</category>
 						<subcategory>
 							<id>UserCountry_SubmenuLocations</id>
@@ -1233,6 +1260,7 @@
 							<order>99</order>
 							<icon />
 							<help />
+							<widget />
 						</category>
 						<subcategory>
 							<id>UserCountry_SubmenuLocations</id>
@@ -1269,7 +1297,7 @@
 				<isReport>1</isReport>
 			</row>
 			<row>
-				<name>Browser language</name>
+				<name>Web-browser language</name>
 				<module>UserLanguage</module>
 				<action>getLanguage</action>
 				<order>108</order>
@@ -1320,12 +1348,13 @@
 			<order>5</order>
 			<icon>icon-reporting-visitors</icon>
 			<help>&lt;p&gt;The Visitors pages tell you things about who your visitors are. Things like where your visitors came from, what devices and browsers they're using and when they generally visit your website. Understand, in the aggregate, who your audience is, and look for outliers to see how your audience could grow.&lt;/p&gt;&lt;p&gt;In addition to general information about your visitors, you can also use the &lt;a href=&quot;#&quot; onclick=&quot;this.href=broadcast.buildReportingUrl('category=General_Visitors&amp;subcategory=Live_VisitorLog')&quot;&gt;Visits Log&lt;/a&gt; to see what occurred in every individual visit.&lt;/p&gt;</help>
+			<widget />
 		</category>
 		<subcategory>
 			<id>VisitTime_SubmenuTimes</id>
 			<name>Times</name>
 			<order>35</order>
-			<help>&lt;p&gt;The Times section shows you when people are visiting your site. You can see the most popular local times your users visit at, so you can understand where your site fits into their life. Additionally, it shows the most popular server times, which can reveal demands on your technology stack.&lt;/p&gt;</help>
+			<help>&lt;p&gt;The &quot;Times&quot; section shows when people visit your site. Popular local times helps you cater your site to their lives. The most popular server times reveals technical demand.&lt;/p&gt;</help>
 		</subcategory>
 		<widgets>
 			<row>
@@ -1343,7 +1372,7 @@
 				<isReport>1</isReport>
 			</row>
 			<row>
-				<name>Visits per server time</name>
+				<name>Visits per hour in the site's timezone</name>
 				<module>VisitTime</module>
 				<action>getVisitInformationPerServerTime</action>
 				<order>120</order>
@@ -1357,7 +1386,7 @@
 				<isReport>1</isReport>
 			</row>
 			<row>
-				<name>Visits by Day of Week</name>
+				<name>Visits by day of the week</name>
 				<module>VisitTime</module>
 				<action>getByDayOfWeek</action>
 				<order>125</order>
@@ -1380,12 +1409,13 @@
 			<order>5</order>
 			<icon>icon-reporting-visitors</icon>
 			<help>&lt;p&gt;The Visitors pages tell you things about who your visitors are. Things like where your visitors came from, what devices and browsers they're using and when they generally visit your website. Understand, in the aggregate, who your audience is, and look for outliers to see how your audience could grow.&lt;/p&gt;&lt;p&gt;In addition to general information about your visitors, you can also use the &lt;a href=&quot;#&quot; onclick=&quot;this.href=broadcast.buildReportingUrl('category=General_Visitors&amp;subcategory=Live_VisitorLog')&quot;&gt;Visits Log&lt;/a&gt; to see what occurred in every individual visit.&lt;/p&gt;</help>
+			<widget />
 		</category>
 		<subcategory>
 			<id>UserCountryMap_RealTimeMap</id>
 			<name>Real-time Map</name>
 			<order>9</order>
-			<help>&lt;p&gt;The Real-time Map shows the location of visitors on your site within the last 30 minutes. Large orange bubbles represent more recent visits, while smaller grey bubbles represent older visits. This data refreshes every five seconds, and new visitors appear with a flashing effect.&lt;/p&gt;</help>
+			<help>&lt;p&gt;Shows the location of website visitors the last 30 minutes, and flashes for new ones. Recent visits are shown as large orange bubbles, and older ones as smaller gray ones. It refreshes every five seconds.&lt;/p&gt;</help>
 		</subcategory>
 		<widgets>
 			<row>
@@ -1410,16 +1440,17 @@
 			<order>5</order>
 			<icon>icon-reporting-visitors</icon>
 			<help>&lt;p&gt;The Visitors pages tell you things about who your visitors are. Things like where your visitors came from, what devices and browsers they're using and when they generally visit your website. Understand, in the aggregate, who your audience is, and look for outliers to see how your audience could grow.&lt;/p&gt;&lt;p&gt;In addition to general information about your visitors, you can also use the &lt;a href=&quot;#&quot; onclick=&quot;this.href=broadcast.buildReportingUrl('category=General_Visitors&amp;subcategory=Live_VisitorLog')&quot;&gt;Visits Log&lt;/a&gt; to see what occurred in every individual visit.&lt;/p&gt;</help>
+			<widget />
 		</category>
 		<subcategory>
 			<id>General_RealTime</id>
 			<name>Real-time</name>
 			<order>7</order>
-			<help>&lt;p&gt;The Visits in Real-time report shows the real-time flow of visits to your website. It includes a real-time counter of your visits and page views in the last 24 hours and the previous 30 minutes.&lt;/p&gt;&lt;p&gt;This report refreshes every 5 seconds and displays new visits (or existing visitors that view a new page) at the top of the list with a fade-in effect.&lt;/p&gt;</help>
+			<help>&lt;p&gt;The visits in the real-time report show the real-time flow of visits to your website. It includes a real-time counter of your visits and page views in the last 24 hours and the previous 30 minutes.&lt;/p&gt;&lt;p&gt;This report refreshes every 5 seconds and displays new visits (or existing visitors that view a new page) at the top of the list with a fade-in effect.&lt;/p&gt;</help>
 		</subcategory>
 		<widgets>
 			<row>
-				<name>Visits in Real-time</name>
+				<name>Visits in real-time</name>
 				<module>Live</module>
 				<action>widget</action>
 				<order>20</order>
@@ -1440,12 +1471,13 @@
 			<order>5</order>
 			<icon>icon-reporting-visitors</icon>
 			<help>&lt;p&gt;The Visitors pages tell you things about who your visitors are. Things like where your visitors came from, what devices and browsers they're using and when they generally visit your website. Understand, in the aggregate, who your audience is, and look for outliers to see how your audience could grow.&lt;/p&gt;&lt;p&gt;In addition to general information about your visitors, you can also use the &lt;a href=&quot;#&quot; onclick=&quot;this.href=broadcast.buildReportingUrl('category=General_Visitors&amp;subcategory=Live_VisitorLog')&quot;&gt;Visits Log&lt;/a&gt; to see what occurred in every individual visit.&lt;/p&gt;</help>
+			<widget />
 		</category>
 		<subcategory>
 			<id>Live_VisitorLog</id>
 			<name>Visits Log</name>
 			<order>5</order>
-			<help>&lt;p&gt;The Visits Log shows you every visit your website receives in detail. You can see what actions each visitor has taken, how they got to your site, a bit about who they are, and more (while still complying with your local privacy regulations).&lt;/p&gt;&lt;p&gt;While other reports in Matomo show how your visitors behave at an aggregate level, the Visits Log provides granular detail. You can also use segments to narrow it down to specific types of visits to understand your visitors better.&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;https://matomo.org/docs/real-time/&quot; target=&quot;_blank&quot; rel=&quot;noreferrer noopener&quot;&gt;Learn more in the Visits Log guide.&lt;/a&gt;&lt;/p&gt;</help>
+			<help>&lt;p&gt;The visits log shows you every visit your website receives in detail. Find out which actions each visitor has performed, how they got to your site, a bit about who they are, and more (while still complying with your local privacy regulations).&lt;/p&gt;&lt;p&gt;While other reports in Matomo show how your visitors behave at an aggregate level, the visits log provides granular detail. You can also use segments to narrow it down to specific types of visits to understand your visitors better.&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;https://matomo.org/docs/real-time/?mtm_campaign=App_Help&amp;mtm_source=Matomo_App&amp;mtm_keyword=UserGuides&quot; target=&quot;_blank&quot; rel=&quot;noreferrer noopener&quot;&gt;Learn more in the visit-log guide.&lt;/a&gt;&lt;/p&gt;</help>
 		</subcategory>
 		<widgets>
 			<row>
@@ -1475,12 +1507,13 @@
 			<order>5</order>
 			<icon>icon-reporting-visitors</icon>
 			<help>&lt;p&gt;The Visitors pages tell you things about who your visitors are. Things like where your visitors came from, what devices and browsers they're using and when they generally visit your website. Understand, in the aggregate, who your audience is, and look for outliers to see how your audience could grow.&lt;/p&gt;&lt;p&gt;In addition to general information about your visitors, you can also use the &lt;a href=&quot;#&quot; onclick=&quot;this.href=broadcast.buildReportingUrl('category=General_Visitors&amp;subcategory=Live_VisitorLog')&quot;&gt;Visits Log&lt;/a&gt; to see what occurred in every individual visit.&lt;/p&gt;</help>
+			<widget />
 		</category>
 		<subcategory>
 			<id>UserId_UserReportTitle</id>
 			<name>User IDs</name>
 			<order>40</order>
-			<help>&lt;p&gt;The User IDs report shows visits associated with all of your registered and logged in users. You can use this section to understand website usage by specific users and identify who your most and least active users are.&lt;/p&gt;&lt;p&gt;&lt;a target=&quot;_blank&quot; rel=&quot;noopener noreferrer&quot; href=&quot;https://matomo.org/docs/user-id/&quot;&gt;&lt;span class=&quot;icon-info&quot;&gt;&lt;/span&gt; Learn more&lt;/a&gt;&lt;/p&gt;</help>
+			<help>&lt;p&gt;The user ID report shows visits associated with all your registered and logged in users. Understand website usage by its specific users and find out who your most and least active users are.&lt;/p&gt;&lt;p&gt;&lt;a target=&quot;_blank&quot; rel=&quot;noopener noreferrer&quot; href=&quot;https://matomo.org/docs/user-id/?mtm_campaign=App_Help&amp;mtm_source=Matomo_App&amp;mtm_keyword=UserGuides&quot;&gt;&lt;span class=&quot;icon-info&quot;&gt;&lt;/span&gt; Learn more&lt;/a&gt;&lt;/p&gt;</help>
 		</subcategory>
 		<widgets>
 			<row>
@@ -1507,6 +1540,7 @@
 			<order>5</order>
 			<icon>icon-reporting-visitors</icon>
 			<help>&lt;p&gt;The Visitors pages tell you things about who your visitors are. Things like where your visitors came from, what devices and browsers they're using and when they generally visit your website. Understand, in the aggregate, who your audience is, and look for outliers to see how your audience could grow.&lt;/p&gt;&lt;p&gt;In addition to general information about your visitors, you can also use the &lt;a href=&quot;#&quot; onclick=&quot;this.href=broadcast.buildReportingUrl('category=General_Visitors&amp;subcategory=Live_VisitorLog')&quot;&gt;Visits Log&lt;/a&gt; to see what occurred in every individual visit.&lt;/p&gt;</help>
+			<widget />
 		</category>
 		<subcategory>
 			<id>CustomVariables_CustomVariables</id>

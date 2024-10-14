@@ -50,7 +50,7 @@ class UrlHelper
         }
         return false;
     }
-    
+
     /**
      * Converts an array of query parameter name/value mappings into a query string.
      * Parameters that are in `$parametersToExclude` will not appear in the result.
@@ -141,7 +141,7 @@ class UrlHelper
      */
     public static function isLookLikeUrl($url)
     {
-        return preg_match('~^(([[:alpha:]][[:alnum:]+.-]*)?:)?//(.*)$~D', $url, $matches) !== 0
+        return $url && preg_match('~^(([[:alpha:]][[:alnum:]+.-]*)?:)?//(.*)$~D', $url, $matches) !== 0
             && strlen($matches[3]) > 0
             && !preg_match('/^(javascript:|vbscript:|data:)/i', $matches[1])
             ;
@@ -177,8 +177,14 @@ class UrlHelper
             return false;
         }
 
+        // According to RFC 1738, the chars ':', '@' and '/' need to be encoded in username or password part of an url
+        // We also encode '\' as a username or password containing that char, might be handled incorrectly by browsers
+        $escapeSpecialChars = function ($value) {
+            return str_replace([':', '@', '/', '\\'], [urlencode(':'), urlencode('@'), urlencode('/'), urlencode('\\')], $value);
+        };
+
         $uri = !empty($parsed['scheme']) ? $parsed['scheme'] . ':' . (!strcasecmp($parsed['scheme'], 'mailto') ? '' : '//') : '';
-        $uri .= !empty($parsed['user']) ? $parsed['user'] . (!empty($parsed['pass']) ? ':' . $parsed['pass'] : '') . '@' : '';
+        $uri .= !empty($parsed['user']) ? $escapeSpecialChars($parsed['user']) . (!empty($parsed['pass']) ? ':' . $escapeSpecialChars($parsed['pass']) : '') . '@' : '';
         $uri .= !empty($parsed['host']) ? $parsed['host'] : '';
         $uri .= !empty($parsed['port']) ? ':' . $parsed['port'] : '';
 
@@ -202,7 +208,7 @@ class UrlHelper
      */
     public static function getArrayFromQueryString($urlQuery)
     {
-        if (strlen($urlQuery) == 0) {
+        if (empty($urlQuery)) {
             return array();
         }
 

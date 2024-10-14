@@ -116,10 +116,23 @@ class DateTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(1557014400, $date->getTimestamp());
     }
 
-    public function testInvalidDateThrowsException()
+    /**
+     * @dataProvider getInvalidDates
+     */
+    public function testInvalidDateThrowsException($valueToTest)
     {
         $this->expectException(Exception::class);
-        Date::factory('0001-01-01');
+        Date::factory($valueToTest);
+    }
+
+    public function getInvalidDates(): iterable
+    {
+        yield 'valid format, earliest possible date' => ['0001-01-01'];
+        yield 'valid format, day before first website creation' => ['1991-08-05'];
+        yield 'ivalid string value' => ['randomString'];
+        yield 'empty string value' => [''];
+        yield 'null value' => [null];
+        yield 'array value' => [['arrayValue']];
     }
 
     public function getTimezoneOffsets()
@@ -406,10 +419,10 @@ class DateTest extends \PHPUnit\Framework\TestCase
         return array(
             array('en', false, '2000-01-01 16:05:52', '16:05:52'),
             array('de', false, '2000-01-01 16:05:52', '16:05:52'),
-            array('en', true, '2000-01-01 16:05:52', '4:05:52 PM'),
-            array('de', true, '2000-01-01 04:05:52', '4:05:52 AM'),
+            array('en', true, '2000-01-01 16:05:52', '4:05:52 PM'),
+            array('de', true, '2000-01-01 04:05:52', '4:05:52 AM'),
             array('zh-tw', true, '2000-01-01 04:05:52', '上午4:05:52'),
-            array('lt', true, '2000-01-01 16:05:52', '04:05:52 popiet'),
+            array('lt', true, '2000-01-01 16:05:52', '04:05:52 popiet'),
             array('ar', true, '2000-01-01 04:05:52', '4:05:52 ص'),
         );
     }

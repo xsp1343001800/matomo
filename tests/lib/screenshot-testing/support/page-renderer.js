@@ -55,7 +55,6 @@ const PAGE_METHODS_TO_PROXY = [
     'tap',
     'target',
     'title',
-    'type',
     'url',
     'viewport',
     'waitForFunction',
@@ -121,13 +120,18 @@ PageRenderer.prototype._reset = function () {
 PageRenderer.prototype.waitFor = function (selectorOrTimeoutOrFunction) {
     console.log('Using page.waitFor is deprecated, please use one of this instead: waitForSelector, waitForFunction, waitForTimeout');
     if (typeof selectorOrTimeoutOrFunction === 'function') {
-        this.webpage.waitForFunction(selectorOrTimeoutOrFunction)
+        return this.webpage.waitForFunction(selectorOrTimeoutOrFunction)
     } else if (typeof selectorOrTimeoutOrFunction === 'number') {
-        this.webpage.waitForTimeout(selectorOrTimeoutOrFunction)
+        return this.webpage.waitForTimeout(selectorOrTimeoutOrFunction)
     } else if (typeof selectorOrTimeoutOrFunction === 'string') {
-        this.webpage.waitForSelector(selectorOrTimeoutOrFunction)
+        return this.webpage.waitForSelector(selectorOrTimeoutOrFunction)
     }
 }
+
+PageRenderer.prototype.type = async function (...args) {
+  await this.webpage.type(...args);
+  await this.waitForTimeout(50); // puppeteer types faster than vue can update the model state
+};
 
 PageRenderer.prototype.isVisible = function (selector) {
     return this.webpage.evaluate(() => {
@@ -301,7 +305,23 @@ PageRenderer.prototype.waitForNetworkIdle = async function () {
         await new Promise(resolve => setTimeout(resolve, AJAX_IDLE_THRESHOLD));
     }
 
-    await this.waitForLazyImages()
+    await this.waitForLazyImages();
+
+    // wait for any queued vue logic
+    await this.webpage.evaluate(function () {
+        if (window.Vue) {
+          return window.Vue.nextTick(function () {
+              // wait
+          });
+        }
+    });
+
+    // if the visitor map is shown trigger a window resize, to ensure map always has the same height/width
+    await this.webpage.evaluate(function () {
+        if (window.jQuery && window.jQuery('.UserCountryMap_map').length) {
+            window.jQuery(window).trigger('resize');
+        }
+    });
 };
 
 PageRenderer.prototype.waitForLazyImages = async function () {
@@ -438,15 +458,14 @@ PageRenderer.prototype._setupWebpageEvents = function () {
         }
 
         var type = '';
-        if (type = request.url().match(/action=get(Css|CoreJs|NonCoreJs)/)) {
+        if (type = request.url().match(/action=get(Css|CoreJs|NonCoreJs|UmdJs)/)) {
             if (errorMessage === 'net::ERR_ABORTED' && (!response || response.status() !== 500)) {
                 console.log(type[1]+' request aborted.');
             } else if (request.url().indexOf('&reload=') === -1) {
                 console.log('Loading '+type[1]+' failed (' + errorMessage + ')... Try adding it with another tag.');
                 var method = type[1] == 'Css' ? 'addStyleTag' : 'addScriptTag';
-                await this.waitForNetworkIdle(); // wait for other requests to finish before trying to reload
                 await this.webpage[method]({url: request.url() + '&reload=' + Date.now()}); // add another get parameter to ensure browser doesn't use cache
-                await this.webpage.waitForTimeout(1000);
+                await this.waitForNetworkIdle(); // wait for request to finish before continuing with tests
             } else {
                 console.log('Reloading '+type[1]+' failed (' + errorMessage + ').');
             }
@@ -485,14 +504,21 @@ PageRenderer.prototype._setupWebpageEvents = function () {
     });
 
     this.webpage.on('console', async (consoleMessage) => {
-        const args = await Promise.all(consoleMessage.args().map(arg => arg.executionContext().evaluate(arg => {
-            if (arg instanceof Error) {
+      try {
+        const args = await Promise.all(consoleMessage.args()
+          .map(arg => arg.executionContext()
+            .evaluate(arg => {
+              if (arg instanceof Error) {
                 return arg.stack || arg.message;
-            }
-            return arg;
-        }, arg)));
+              }
+              return arg;
+            }, arg)));
         const message = args.join(' ');
         this._logMessage(`Log: ${message}`);
+      } catch (e) {
+        console.log(`Could not print message: ${e.message}`);
+      }
+
     });
 
     this.webpage.on('dialog', (dialog) => {
